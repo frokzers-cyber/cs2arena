@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CS2 Tournament Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.5.0/remixicon.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="./supabase.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+  <div class="ambient ambient-c"></div>
+  <div class="grain"></div>
+
+  <div id="authOverlay" class="auth-overlay">
+    <div class="auth-shell">
+      <div class="auth-hero">
+        <div class="brand-mark">
+          <div class="brand-star"><i class="ri-star-s-fill"></i></div>
+          <div>
+            <div class="brand-title">CS2 Arena</div>
+            <div class="brand-subtitle">Tournament Platform</div>
+          </div>
+        </div>
+        <h1>Турнирная платформа для Counter-Strike 2</h1>
+        <p>Команды, турниры, сетка, новости, чат и админ-панель в одном коммерческом интерфейсе.</p>
+        <div class="auth-points">
+          <div class="point"><i class="ri-shield-keyhole-line"></i><span>Supabase Auth</span></div>
+          <div class="point"><i class="ri-team-line"></i><span>Командный менеджмент</span></div>
+          <div class="point"><i class="ri-trophy-line"></i><span>Турниры и сетка</span></div>
+        </div>
+      </div>
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-auth-tab="login">Вход</button>
+          <button class="auth-tab" data-auth-tab="register">Регистрация</button>
+        </div>
+        <form id="loginForm" class="auth-form">
+          <label class="field">
+            <span>Email</span>
+            <input name="email" type="email" autocomplete="email" required>
+          </label>
+          <label class="field">
+            <span>Пароль</span>
+            <input name="password" type="password" autocomplete="current-password" required>
+          </label>
+          <button class="primary-btn" type="submit">Войти</button>
+        </form>
+        <form id="registerForm" class="auth-form hidden">
+          <label class="field">
+            <span>Никнейм</span>
+            <input name="username" type="text" minlength="3" maxlength="24" required>
+          </label>
+          <label class="field">
+            <span>Отображаемое имя</span>
+            <input name="display_name" type="text" minlength="2" maxlength="32" required>
+          </label>
+          <label class="field">
+            <span>Email</span>
+            <input name="email" type="email" autocomplete="email" required>
+          </label>
+          <label class="field">
+            <span>Пароль</span>
+            <input name="password" type="password" autocomplete="new-password" minlength="6" required>
+          </label>
+          <button class="primary-btn" type="submit">Создать аккаунт</button>
+        </form>
+        <div id="authMessage" class="auth-message"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="appShell" class="app-shell hidden">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="logo">
+          <div class="logo-icon"><i class="ri-star-s-fill"></i></div>
+          <div>
+            <div class="logo-name">CS2 Arena</div>
+            <div class="logo-caption">Competitive Hub</div>
+          </div>
+        </div>
+      </div>
+      <div class="topbar-center">
+        <button class="nav-chip active" data-tab="home">Главная</button>
+        <button class="nav-chip" data-tab="news">Новости</button>
+        <button class="nav-chip" data-tab="tournaments">Турниры</button>
+        <button class="nav-chip" data-tab="teams">Команды</button>
+        <button class="nav-chip" data-tab="chat">Чат</button>
+        <button class="nav-chip" data-tab="profile">Профиль</button>
+        <button id="adminNavChip" class="nav-chip hidden" data-tab="admin">Админ</button>
+      </div>
+      <div class="topbar-right">
+        <label class="search-box">
+          <i class="ri-search-line"></i>
+          <input id="globalSearch" type="search" placeholder="Поиск команд и игроков">
+        </label>
+        <div class="user-chip">
+          <img id="userAvatar" alt="" />
+          <div>
+            <div id="userName" class="user-name">Guest</div>
+            <div id="userMeta" class="user-meta">Online</div>
+          </div>
+        </div>
+        <button id="logoutBtn" class="ghost-btn"><i class="ri-logout-box-r-line"></i></button>
+      </div>
+    </header>
+
+    <main class="main-grid">
+      <aside class="side-rail">
+        <button class="rail-card" data-tab="home">
+          <i class="ri-home-5-line"></i>
+          <span>Лента</span>
+        </button>
+        <button class="rail-card" data-tab="teams">
+          <i class="ri-group-line"></i>
+          <span>Команды</span>
+        </button>
+        <button class="rail-card" data-tab="tournaments">
+          <i class="ri-trophy-line"></i>
+          <span>Турниры</span>
+        </button>
+        <button class="rail-card" data-tab="chat">
+          <i class="ri-chat-3-line"></i>
+          <span>Чат</span>
+        </button>
+      </aside>
+
+      <section class="content-grid">
+        <section id="tab-home" class="tab-pane active">
+          <div class="hero-banner">
+            <div class="hero-copy">
+              <div class="hero-kicker">Counter-Strike 2 competitive platform</div>
+              <h2>Собери команду. Зарегистрируй турнир. Управляй киберспортивной экосистемой.</h2>
+              <p>Дизайн в стиле CS2: темная тема, квадратные блоки, оранжевые акценты, новостная лента, заявки команд и турнирная сетка.</p>
+              <div class="hero-actions">
+                <button class="primary-btn" data-action="open-create-team">Создать команду</button>
+                <button class="secondary-btn" data-tab="tournaments">Посмотреть турниры</button>
+              </div>
+              <div class="hero-stats" id="homeStats"></div>
+            </div>
+            <div class="hero-art">
+              <div class="hero-art-card hero-art-main"></div>
+              <div class="hero-art-stack">
+                <div class="hero-art-card hero-art-one"></div>
+                <div class="hero-art-card hero-art-two"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h4>Поиск команд и игроков</h4>
+                <p>Результаты обновляются по введенному запросу</p>
+              </div>
+            </div>
+            <div id="searchResults" class="cards-grid"></div>
+          </div>
+
+          <div class="section-title">
+            <div>
+              <h3>Рекомендуемые турниры</h3>
+              <p>Актуальные события, набор команд и призовые фонды</p>
+            </div>
+            <button class="tiny-btn" data-tab="tournaments">Открыть все</button>
+          </div>
+          <div id="featuredTournaments" class="cards-grid"></div>
+
+          <div class="section-title">
+            <div>
+              <h3>Последние новости</h3>
+              <p>Официальные анонсы и обновления сайта</p>
+            </div>
+            <button class="tiny-btn" data-tab="news">Открыть все</button>
+          </div>
+          <div id="featuredNews" class="cards-grid"></div>
+        </section>
+
+        <section id="tab-news" class="tab-pane">
+          <div class="section-title">
+            <div>
+              <h3>Новости и анонсы</h3>
+              <p>Публикации администраторов</p>
+            </div>
+          </div>
+          <div id="newsList" class="cards-grid cards-grid-wide"></div>
+        </section>
+
+        <section id="tab-tournaments" class="tab-pane">
+          <div class="section-title">
+            <div>
+              <h3>Турниры</h3>
+              <p>Заявки команд, участники, сетка и результаты</p>
+            </div>
+            <button id="adminCreateTournamentBtn" class="primary-btn hidden" data-action="open-create-tournament">Создать турнир</button>
+          </div>
+          <div id="tournamentList" class="cards-grid cards-grid-wide"></div>
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h4 id="bracketTitle">Турнирная сетка</h4>
+                <p id="bracketSubtitle">Выберите турнир, чтобы увидеть сетку</p>
+              </div>
+              <button id="generateBracketBtn" class="secondary-btn hidden">Сгенерировать сетку</button>
+            </div>
+            <div id="bracketView" class="bracket-view"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h4>Участники турнира</h4>
+                <p>Зарегистрированные команды по заявкам</p>
+              </div>
+            </div>
+            <div id="participantsView" class="table-wrap"></div>
+          </div>
+        </section>
+
+        <section id="tab-teams" class="tab-pane">
+          <div class="section-title">
+            <div>
+              <h3>Команды</h3>
+              <p>Создание, редактирование, участники и приглашения</p>
+            </div>
+            <button class="primary-btn" data-action="open-create-team">Создать команду</button>
+          </div>
+          <div id="teamList" class="cards-grid cards-grid-wide"></div>
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h4 id="teamDetailTitle">Панель команды</h4>
+                <p id="teamDetailSubtitle">Выберите команду из списка</p>
+              </div>
+              <div class="panel-actions">
+                <button id="editTeamBtn" class="secondary-btn hidden">Редактировать</button>
+                <button id="invitePlayerBtn" class="secondary-btn hidden">Пригласить игрока</button>
+                <button id="applyTournamentBtn" class="secondary-btn hidden">Подать заявку</button>
+              </div>
+            </div>
+            <div id="teamDetail" class="team-detail"></div>
+          </div>
+        </section>
+
+        <section id="tab-chat" class="tab-pane">
+          <div class="chat-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h4>Глобальный чат</h4>
+                  <p>Общий канал сайта</p>
+                </div>
+              </div>
+              <div id="globalChat" class="chat-box"></div>
+              <form id="globalChatForm" class="chat-form">
+                <input name="content" type="text" maxlength="500" placeholder="Напишите сообщение" required>
+                <button class="primary-btn" type="submit">Отправить</button>
+              </form>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h4>Чат команды</h4>
+                  <p>Доступен для участников выбранной команды</p>
+                </div>
+                <select id="teamChatSelector" class="select-box"></select>
+              </div>
+              <div id="teamChat" class="chat-box"></div>
+              <form id="teamChatForm" class="chat-form">
+                <input name="content" type="text" maxlength="500" placeholder="Сообщение команде" required>
+                <button class="primary-btn" type="submit">Отправить</button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <section id="tab-profile" class="tab-pane">
+          <div class="profile-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h4>Профиль игрока</h4>
+                  <p>Редактирование никнейма, аватара и описания</p>
+                </div>
+              </div>
+              <form id="profileForm" class="profile-form">
+                <label class="field">
+                  <span>Никнейм</span>
+                  <input name="username" type="text" minlength="3" maxlength="24" required>
+                </label>
+                <label class="field">
+                  <span>Отображаемое имя</span>
+                  <input name="display_name" type="text" minlength="2" maxlength="32" required>
+                </label>
+                <label class="field">
+                  <span>Страна</span>
+                  <input name="country" type="text" maxlength="48">
+                </label>
+                <label class="field">
+                  <span>Аватар URL</span>
+                  <input name="avatar_url" type="url" maxlength="512">
+                </label>
+                <label class="field">
+                  <span>О себе</span>
+                  <textarea name="bio" rows="5" maxlength="500"></textarea>
+                </label>
+                <button class="primary-btn" type="submit">Сохранить профиль</button>
+              </form>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h4>Уведомления</h4>
+                  <p>Приглашения, заявки и системные события</p>
+                </div>
+              </div>
+              <div id="notificationList" class="notification-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="tab-admin" class="tab-pane">
+          <div class="admin-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h4>Создание турнира</h4>
+                  <p>Админ-панель для управления событиями</p>
+                </div>
+              </div>
+              <form id="tournamentForm" class="profile-form">
+                <label class="field">
+                  <span>Название</span>
+                  <input name="title" type="text" maxlength="120" required>
+                </label>
+                <label class="field">
+                  <span>Описание</span>
+                  <textarea name="description" rows="4" maxlength="1200" required></textarea>
+                </label>
+                <label class="field">
+                  <span>Призовой фонд</span>
+                  <input name="prize_pool" type="text" maxlength="80" required>
+                </label>
+                <label class="field">
+                  <span>Формат</span>
+                  <input name="game_mode" type="text" maxlength="80" value="5v5 Elimination" required>
+                </label>
+                <label class="field">
+                  <span>Дата старта</span>
+                  <input name="start_at" type="datetime-local" required>
+                </label>
+                <label class="field">
+                  <span>Дата чек-ина</span>
+                  <input name="checkin_at" type="datetime-local">
+                </label>
+                <label class="field">
+                  <span>Макс. команд</span>
+                  <input name="max_teams" type="number" min="2" max="256" value="16" required>
+                </label>
+                <label class="field">
+                  <span>Баннер URL</span>
+                  <input name="banner_url" type="url" maxlength="512">
+                </label>
+                <button class="primary-btn" type="submit">Опубликовать турнир</button>
+              </form>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h4>Публикация новости</h4>
+                  <p>Новости сайта и анонсы</p>
+                </div>
+              </div>
+              <form id="newsForm" class="profile-form">
+                <label class="field">
+                  <span>Заголовок</span>
+                  <input name="title" type="text" maxlength="160" required>
+                </label>
+                <label class="field">
+                  <span>Краткое описание</span>
+                  <textarea name="excerpt" rows="3" maxlength="280" required></textarea>
+                </label>
+                <label class="field">
+                  <span>Контент</span>
+                  <textarea name="content" rows="7" maxlength="5000" required></textarea>
+                </label>
+                <label class="field">
+                  <span>Обложка URL</span>
+                  <input name="cover_url" type="url" maxlength="512">
+                </label>
+                <label class="checkline">
+                  <input name="published" type="checkbox" checked>
+                  <span>Опубликовать сразу</span>
+                </label>
+                <button class="primary-btn" type="submit">Сохранить новость</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h4>Заявки команд</h4>
+                <p>Одобрение и отклонение</p>
+              </div>
+            </div>
+            <div id="applicationsTable" class="table-wrap"></div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div id="teamModal" class="modal">
+    <div class="modal-card">
+      <div class="panel-head">
+        <div>
+          <h4 id="teamModalTitle">Команда</h4>
+          <p id="teamModalSubtitle">Создание или редактирование команды</p>
+        </div>
+        <button class="icon-btn" data-close-modal="teamModal"><i class="ri-close-line"></i></button>
+      </div>
+      <form id="teamForm" class="profile-form">
+        <input type="hidden" name="id">
+        <label class="field">
+          <span>Название</span>
+          <input name="name" type="text" maxlength="120" required>
+        </label>
+        <label class="field">
+          <span>Тег</span>
+          <input name="tag" type="text" maxlength="16" required>
+        </label>
+        <label class="field">
+          <span>Регион</span>
+          <input name="region" type="text" maxlength="48" value="EU">
+        </label>
+        <label class="field">
+          <span>Описание</span>
+          <textarea name="description" rows="5" maxlength="1200"></textarea>
+        </label>
+        <label class="field">
+          <span>Лого URL</span>
+          <input name="logo_url" type="url" maxlength="512">
+        </label>
+        <label class="field">
+          <span>Загрузка логотипа</span>
+          <input name="logo_file" type="file" accept="image/*">
+        </label>
+        <label class="checkline">
+          <input name="looking_for_players" type="checkbox" checked>
+          <span>Ищем игроков</span>
+        </label>
+        <button class="primary-btn" type="submit">Сохранить команду</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="inviteModal" class="modal">
+    <div class="modal-card">
+      <div class="panel-head">
+        <div>
+          <h4>Пригласить игрока</h4>
+          <p>Введите ник зарегистрированного пользователя</p>
+        </div>
+        <button class="icon-btn" data-close-modal="inviteModal"><i class="ri-close-line"></i></button>
+      </div>
+      <form id="inviteForm" class="profile-form">
+        <input type="hidden" name="team_id">
+        <label class="field">
+          <span>Команда</span>
+          <input name="team_name" type="text" readonly>
+        </label>
+        <label class="field">
+          <span>Никнейм игрока</span>
+          <input name="username" type="text" minlength="3" maxlength="24" required>
+        </label>
+        <label class="field">
+          <span>Сообщение</span>
+          <textarea name="message" rows="4" maxlength="500"></textarea>
+        </label>
+        <button class="primary-btn" type="submit">Отправить приглашение</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="tournamentModal" class="modal">
+    <div class="modal-card">
+      <div class="panel-head">
+        <div>
+          <h4>Подать заявку на турнир</h4>
+          <p>Выберите команду и добавьте комментарий</p>
+        </div>
+        <button class="icon-btn" data-close-modal="tournamentModal"><i class="ri-close-line"></i></button>
+      </div>
+      <form id="applyForm" class="profile-form">
+        <input type="hidden" name="tournament_id">
+        <label class="field">
+          <span>Турнир</span>
+          <input name="tournament_name" type="text" readonly>
+        </label>
+        <label class="field">
+          <span>Команда</span>
+          <select name="team_id" class="select-box" required></select>
+        </label>
+        <label class="field">
+          <span>Комментарий</span>
+          <textarea name="note" rows="4" maxlength="500"></textarea>
+        </label>
+        <button class="primary-btn" type="submit">Отправить заявку</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="toastRoot" class="toast-root"></div>
+</body>
+</html>
