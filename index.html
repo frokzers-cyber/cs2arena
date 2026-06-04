@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CS2 ARENA — Турнирная Платформа</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600;700;800&family=Share+Tech+Mono&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="navbar-inner">
+    <div class="navbar-logo" id="logo-btn">
+      <i class="fas fa-crosshairs" style="color:var(--accent-gold);font-size:22px;"></i>
+      <div class="navbar-logo-text">CS2<span>ARENA</span></div>
+    </div>
+    <div class="navbar-nav">
+      <button class="nav-btn active" data-page="page-home">Главная</button>
+      <button class="nav-btn" data-page="page-tournaments">Турниры</button>
+      <button class="nav-btn" data-page="page-teams">Команды</button>
+      <button class="nav-btn" data-page="page-news">Новости</button>
+      <button class="nav-btn" data-page="page-community">Сообщество</button>
+      <button class="nav-btn" data-page="page-search">Поиск</button>
+      <button class="nav-btn" id="admin-nav-link" data-page="page-admin" style="display:none;">Админ</button>
+    </div>
+    <div class="navbar-right">
+      <div id="guest-nav" style="display:flex;gap:8px;">
+        <button class="btn-auth btn-login" id="btn-open-login">Войти</button>
+        <button class="btn-auth btn-register" id="btn-open-register">Регистрация</button>
+      </div>
+      <div id="user-nav" style="display:none;align-items:center;gap:8px;">
+        <button class="notification-btn" id="notif-btn">
+          <i class="fas fa-bell"></i>
+          <span class="notif-badge" id="notif-count" style="display:none;">0</span>
+        </button>
+        <button class="user-avatar-btn" id="btn-profile">
+          <img id="nav-avatar" src="" style="display:none;" alt="avatar">
+          <span id="nav-avatar-text" style="width:24px;height:24px;border-radius:50%;background:var(--bg-elevated);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--accent-gold);"></span>
+          <span id="nav-username">Игрок</span>
+        </button>
+        <button class="btn-auth btn-login" id="btn-logout">Выйти</button>
+      </div>
+      <button class="mobile-nav-toggle" id="mobile-nav-toggle"><i class="fas fa-bars"></i></button>
+    </div>
+  </div>
+</nav>
+
+<div id="notif-panel" class="notif-panel">
+  <div class="notif-panel-header">
+    <span class="notif-panel-title">Уведомления</span>
+    <button class="btn btn-secondary-action btn-sm" id="mark-all-read-btn">Прочитать все</button>
+  </div>
+  <div id="notif-list"></div>
+</div>
+
+<div id="mobile-nav" class="mobile-nav">
+  <button class="nav-btn" data-page="page-home">Главная</button>
+  <button class="nav-btn" data-page="page-tournaments">Турниры</button>
+  <button class="nav-btn" data-page="page-teams">Команды</button>
+  <button class="nav-btn" data-page="page-news">Новости</button>
+  <button class="nav-btn" data-page="page-community">Сообщество</button>
+  <button class="nav-btn" data-page="page-search">Поиск</button>
+  <button class="nav-btn" id="admin-nav-link-mobile" data-page="page-admin" style="display:none;">Админ</button>
+</div>
+
+<!-- ===== PAGE: HOME ===== -->
+<div id="page-home" class="page active">
+  <section class="hero-section">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-tag"><span></span>ОФИЦИАЛЬНАЯ ТУРНИРНАЯ ПЛАТФОРМА</div>
+      <h1 class="hero-title">
+        <span class="line1">БИТВА ЗА</span>
+        <span class="line2">ПЕРВЕНСТВО</span>
+      </h1>
+      <p class="hero-subtitle">Участвуй в профессиональных CS2 турнирах. Собери команду, докажи своё превосходство и войди в историю.</p>
+      <div class="hero-actions">
+        <button class="btn-primary btn-gold btn-lg" id="hero-btn-tournaments"><i class="fas fa-trophy"></i>&nbsp; СМОТРЕТЬ ТУРНИРЫ</button>
+        <button class="btn-primary btn-outline btn-lg" id="hero-btn-register"><i class="fas fa-user-plus"></i>&nbsp; РЕГИСТРАЦИЯ</button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stats-inner">
+        <div class="hero-stat">
+          <div class="hero-stat-num" id="stat-teams">0</div>
+          <div class="hero-stat-label">Команд</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num" id="stat-tournaments">0</div>
+          <div class="hero-stat-label">Турниров</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num" id="stat-players">0</div>
+          <div class="hero-stat-label">Игроков</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Активные турниры</h2>
+        <button class="section-link" id="home-see-all-tournaments">Все турниры <i class="fas fa-arrow-right" style="margin-left:6px;"></i></button>
+      </div>
+      <div id="featured-tournaments" class="grid-3"></div>
+    </div>
+  </section>
+
+  <div class="cs2-decor-line"></div>
+
+  <section class="section">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;">
+        <div>
+          <div class="section-header">
+            <h2 class="section-title">Последние новости</h2>
+            <button class="section-link" id="home-see-all-news">Все новости <i class="fas fa-arrow-right" style="margin-left:6px;"></i></button>
+          </div>
+          <div id="latest-news" class="grid-2" style="grid-template-columns:1fr;"></div>
+        </div>
+        <div>
+          <div class="section-header">
+            <h2 class="section-title">Топ команды</h2>
+            <button class="section-link" id="home-see-all-teams">Все команды <i class="fas fa-arrow-right" style="margin-left:6px;"></i></button>
+          </div>
+          <div id="top-teams"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--bg-secondary);padding:80px 0;position:relative;overflow:hidden;">
+    <div style="position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=60') center/cover no-repeat;opacity:0.04;"></div>
+    <div class="container" style="position:relative;z-index:1;text-align:center;">
+      <div class="hero-tag" style="justify-content:center;margin:0 auto 24px;display:inline-flex;"><span></span>НАЧНИ СЕЙЧАС</div>
+      <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,52px);font-weight:700;text-transform:uppercase;margin-bottom:20px;">Готов к вызову?</h2>
+      <p style="color:var(--text-secondary);font-size:16px;max-width:500px;margin:0 auto 40px;">Создай команду, подай заявку на турнир и начни свой путь к победе прямо сейчас.</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn-primary btn-gold btn-lg" onclick="if(window.currentUser){openModal('modal-create-team')}else{openModal('modal-register')}"><i class="fas fa-users"></i>&nbsp; Создать команду</button>
+        <button class="btn-primary btn-outline btn-lg" onclick="navigate('page-tournaments')"><i class="fas fa-trophy"></i>&nbsp; Все турниры</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===== PAGE: TOURNAMENTS ===== -->
+<div id="page-tournaments" class="page">
+  <div class="page-content">
+    <div class="container">
+      <div class="page-header" style="padding-top:0;">
+        <h1 class="page-title">ТУРНИРЫ <span>CS2</span></h1>
+        <p class="page-subtitle">Список всех турниров платформы</p>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px;align-items:center;">
+        <div class="search-bar" style="margin:0;flex:1;min-width:200px;">
+          <i class="fas fa-search"></i>
+          <input type="text" id="tournament-search-input" placeholder="Поиск турнира...">
+        </div>
+        <select class="form-select" id="tournament-filter" style="width:auto;min-width:160px;">
+          <option value="all">Все статусы</option>
+          <option value="upcoming">Скоро</option>
+          <option value="registration">Регистрация</option>
+          <option value="ongoing">Идёт</option>
+          <option value="completed">Завершены</option>
+        </select>
+      </div>
+      <div id="tournaments-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE: TEAMS ===== -->
+<div id="page-teams" class="page">
+  <div class="page-content">
+    <div class="container">
+      <div class="page-header" style="padding-top:0;">
+        <h1 class="page-title">КОМАНДЫ</h1>
+        <p class="page-subtitle">Все зарегистрированные команды</p>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px;align-items:center;">
+        <div class="search-bar" style="margin:0;flex:1;min-width:200px;">
+          <i class="fas fa-search"></i>
+          <input type="text" id="team-search-input" placeholder="Поиск команды...">
+        </div>
+        <button class="btn btn-primary-action" id="btn-create-team"><i class="fas fa-plus"></i>&nbsp; Создать команду</button>
+      </div>
+      <div id="teams-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE: NEWS ===== -->
+<div id="page-news" class="page">
+  <div class="page-content">
+    <div class="container">
+      <div class="page-header" style="padding-top:0;">
+        <h1 class="page-title">НОВОСТИ <span>&</span> АНОНСЫ</h1>
+        <p class="page-subtitle">Последние новости платформы</p>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px;align-items:center;">
+        <div class="search-bar" style="margin:0;flex:1;min-width:200px;">
+          <i class="fas fa-search"></i>
+          <input type="text" id="news-search-input" placeholder="Поиск новостей...">
+        </div>
+        <select class="form-select" id="news-category-filter" style="width:auto;min-width:160px;">
+          <option value="all">Все категории</option>
+          <option value="news">Новости</option>
+          <option value="announcement">Анонсы</option>
+          <option value="update">Обновления</option>
+          <option value="event">Ивенты</option>
+        </select>
+      </div>
+      <div id="news-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE: COMMUNITY ===== -->
+<div id="page-community" class="page">
+  <div class="page-content">
+    <div class="container">
+      <div class="page-header" style="padding-top:0;">
+        <h1 class="page-title">СООБЩЕСТВО</h1>
+        <p class="page-subtitle">Общение и командная жизнь</p>
+      </div>
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start;">
+        <div>
+          <h3 class="section-title" style="margin-bottom:16px;">Глобальный чат</h3>
+          <div class="chat-container">
+            <div class="chat-header">
+              <div class="live-dot"></div>
+              <span class="chat-title">LIVE CHAT</span>
+            </div>
+            <div class="chat-messages" id="global-chat-messages"></div>
+            <div class="chat-input-area">
+              <input type="text" class="chat-input" id="global-chat-input" placeholder="Написать сообщение...">
+              <button class="chat-send-btn" id="global-chat-send"><i class="fas fa-paper-plane"></i></button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 class="section-title" style="margin-bottom:16px;">Мои приглашения</h3>
+          <div id="invites-list">
+            <p style="color:var(--text-muted);font-size:13px;">Войдите, чтобы видеть приглашения</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE: SEARCH ===== -->
+<div id="page-search" class="page">
+  <div class="page-content">
+    <div class="container">
+      <div class="page-header" style="padding-top:0;">
+        <h1 class="page-title">ПОИСК</h1>
+        <p class="page-subtitle">Найди команды и игроков</p>
+      </div>
+      <div class="search-bar" style="max-width:100%;margin-bottom:32px;">
+        <i class="fas fa-search"></i>
+        <input type="text" id="global-search-input" placeholder="Введите имя команды или игрока...">
+      </div>
+      <div id="search-results-teams"></div>
+      <div id="search-results-players"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE: PROFILE ===== -->
+<div id="page-profile" class="page">
+  <div class="page-content">
+    <div class="container">
+      <div class="profile-header">
+        <div class="profile-avatar-large" id="profile-avatar-text" style="width:100px;height:100px;"></div>
+        <img id="profile-avatar-img" src="" style="display:none;width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--border-accent);" alt="">
+        <div class="profile-info">
+          <div class="profile-username" id="profile-username">—</div>
+          <div class="profile-display-name" id="profile-display-name">—</div>
+          <div class="profile-badges">
+            <span class="badge" id="profile-role-badge">Игрок</span>
+          </div>
+          <div style="display:flex;gap:24px;margin-top:16px;flex-wrap:wrap;">
+            <span style="font-size:13px;color:var(--text-secondary);"><i class="fas fa-globe" style="color:var(--accent-gold);margin-right:6px;"></i><span id="profile-country">—</span></span>
+            <span style="font-size:13px;color:var(--text-secondary);"><i class="fab fa-steam" style="color:var(--accent-gold);margin-right:6px;"></i><span id="profile-steam">—</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="showProfileTab('tab-about',this)">О себе</button>
+        <button class="tab-btn" onclick="showProfileTab('tab-teams',this)">Команды</button>
+        <button class="tab-btn" onclick="showProfileTab('tab-applications',this)">Заявки</button>
+        <button class="tab-btn" onclick="showProfileTab('tab-edit',this)">Редактировать</button>
+      </div>
+      <div id="tab-about">
+        <p id="profile-bio" style="color:var(--text-secondary);font-size:14px;line-height:1.7;"></p>
+      </div>
+      <div id="tab-teams" style="display:none;">
+        <div id="profile-teams"></div>
+      </div>
+      <div id="tab-applications" style="display:none;">
+        <div id="profile-applications"></div>
+      </div>
+      <div id="tab-edit" style="display:none;">
+        <form id="profile-edit-form" style="max-width:500px;">
+          <div class="form-group">
+            <label class="form-label">Фото профиля</label>
+            <input type="file" id="profile-avatar-input" class="form-input" accept="image/*">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Отображаемое имя</label>
+            <input type="text" id="profile-display-name-input" class="form-input" placeholder="Ваше отображаемое имя">
+          </div>
+          <div class="form-group">
+            <label class="form-label">О себе</label>
+            <textarea id="profile-bio-input" class="form-textarea" placeholder="Расскажите о себе..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Steam ID</label>
+            <input type="text" id="profile-steam-input" class="form-input" placeholder="STEAM_0:0:...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Страна</label>
+            <input type="text" id="profile-country-input" class="form-input" placeholder="Россия">
+          </div>
+          <button type="submit" class="btn btn-primary-action btn-full">Сохранить изменения</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE: ADMIN ===== -->
+<div id="page-admin" class="page">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div style="padding:20px;border-bottom:1px solid var(--border-primary);">
+        <div style="font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:3px;color:var(--accent-gold);text-transform:uppercase;">Admin Panel</div>
+      </div>
+      <div class="admin-nav">
+        <div class="admin-nav-item active" data-section="dashboard"><i class="fas fa-chart-bar"></i> Dashboard</div>
+        <div class="admin-nav-item" data-section="tournaments"><i class="fas fa-trophy"></i> Турниры</div>
+        <div class="admin-nav-item" data-section="applications"><i class="fas fa-file-alt"></i> Заявки</div>
+        <div class="admin-nav-item" data-section="news"><i class="fas fa-newspaper"></i> Новости</div>
+        <div class="admin-nav-item" data-section="users"><i class="fas fa-users"></i> Пользователи</div>
+      </div>
+    </aside>
+    <main class="admin-content">
+      <div id="admin-dashboard" class="admin-section">
+        <h2 class="page-title" style="margin-bottom:24px;">DASHBOARD</h2>
+        <div class="grid-4" style="margin-bottom:32px;">
+          <div class="admin-stat-card"><div class="admin-stat-value" id="admin-stat-teams">0</div><div class="admin-stat-label">Команд</div></div>
+          <div class="admin-stat-card"><div class="admin-stat-value" id="admin-stat-tournaments">0</div><div class="admin-stat-label">Турниров</div></div>
+          <div class="admin-stat-card"><div class="admin-stat-value" id="admin-stat-players">0</div><div class="admin-stat-label">Игроков</div></div>
+          <div class="admin-stat-card"><div class="admin-stat-value text-gold" id="admin-stat-pending">0</div><div class="admin-stat-label">Ожид. заявок</div></div>
+        </div>
+      </div>
+      <div id="admin-tournaments" class="admin-section" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+          <h2 class="page-title">ТУРНИРЫ</h2>
+          <button class="btn btn-primary-action" id="admin-create-tournament-btn"><i class="fas fa-plus"></i>&nbsp; Создать</button>
+        </div>
+        <div id="admin-tournaments-list"></div>
+      </div>
+      <div id="admin-applications" class="admin-section" style="display:none;">
+        <h2 class="page-title" style="margin-bottom:24px;">ЗАЯВКИ КОМАНД</h2>
+        <div id="admin-applications-list"></div>
+      </div>
+      <div id="admin-news" class="admin-section" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+          <h2 class="page-title">НОВОСТИ</h2>
+          <button class="btn btn-primary-action" id="admin-create-news-btn"><i class="fas fa-plus"></i>&nbsp; Создать</button>
+        </div>
+        <div id="admin-news-list"></div>
+      </div>
+      <div id="admin-users" class="admin-section" style="display:none;">
+        <h2 class="page-title" style="margin-bottom:24px;">ПОЛЬЗОВАТЕЛИ</h2>
+        <div id="admin-users-list"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ===== MODALS ===== -->
+
+<!-- LOGIN -->
+<div class="modal-overlay" id="modal-login">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">ВОЙТИ</span>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="login-email" class="form-input" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Пароль</label>
+          <input type="password" id="login-password" class="form-input" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary-action btn-full btn-lg">Войти</button>
+      </form>
+      <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-muted);">Нет аккаунта? <button class="btn" style="background:none;border:none;color:var(--accent-gold);padding:0;font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer;text-transform:none;letter-spacing:0;" id="btn-open-register2">Зарегистрироваться</button></p>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="modal-overlay" id="modal-register">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">РЕГИСТРАЦИЯ</span>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="register-form">
+        <div class="form-group">
+          <label class="form-label">Имя пользователя</label>
+          <input type="text" id="reg-username" class="form-input" placeholder="xX_ProPlayer_Xx" required minlength="3">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="reg-email" class="form-input" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Пароль</label>
+          <input type="password" id="reg-password" class="form-input" placeholder="Минимум 6 символов" required minlength="6">
+        </div>
+        <button type="submit" class="btn btn-primary-action btn-full btn-lg">Создать аккаунт</button>
+      </form>
+      <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-muted);">Уже есть аккаунт? <button class="btn" style="background:none;border:none;color:var(--accent-gold);padding:0;font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer;text-transform:none;letter-spacing:0;" id="btn-open-login2">Войти</button></p>
+    </div>
+  </div>
+</div>
+
+<!-- TOURNAMENT DETAIL -->
+<div class="modal-overlay" id="modal-tournament-detail">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title" id="td-name">Турнир</span>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <img id="td-banner" src="" style="width:100%;height:200px;object-fit:cover;display:none;margin-bottom:20px;" alt="">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;align-items:center;">
+        <div id="td-status"></div>
+      </div>
+      <div class="grid-2" style="gap:16px;margin-bottom:20px;">
+        <div class="admin-stat-card" style="padding:16px;">
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Формат</div>
+          <div id="td-format" style="font-family:var(--font-display);font-size:16px;font-weight:700;"></div>
+        </div>
+        <div class="admin-stat-card" style="padding:16px;">
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Макс. команд</div>
+          <div id="td-max-teams" style="font-family:var(--font-display);font-size:16px;font-weight:700;"></div>
+        </div>
+        <div class="admin-stat-card" style="padding:16px;">
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Призовой фонд</div>
+          <div id="td-prize" style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--accent-gold);"></div>
+        </div>
+        <div class="admin-stat-card" style="padding:16px;">
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Дата начала</div>
+          <div id="td-start" style="font-family:var(--font-display);font-size:16px;font-weight:700;"></div>
+        </div>
+      </div>
+      <div style="margin-bottom:20px;">
+        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Регистрация</div>
+        <div style="font-size:13px;color:var(--text-secondary);">С <span id="td-reg-start" style="color:var(--text-primary);font-weight:600;"></span> по <span id="td-reg-end" style="color:var(--text-primary);font-weight:600;"></span></div>
+      </div>
+      <div style="margin-bottom:20px;">
+        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Описание</div>
+        <div id="td-description" style="font-size:13px;color:var(--text-secondary);line-height:1.7;"></div>
+      </div>
+      <hr class="divider">
+      <div style="margin-bottom:20px;">
+        <div style="font-family:var(--font-display);font-size:15px;font-weight:700;text-transform:uppercase;margin-bottom:12px;">Участники</div>
+        <div id="td-participants"></div>
+      </div>
+      <hr class="divider">
+      <div>
+        <div style="font-family:var(--font-display);font-size:15px;font-weight:700;text-transform:uppercase;margin-bottom:12px;">Турнирная сетка</div>
+        <div id="td-bracket"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary-action" id="td-apply-btn" style="display:none;"><i class="fas fa-paper-plane"></i>&nbsp; Подать заявку</button>
+    </div>
+  </div>
+</div>
+
+<!-- APPLY TOURNAMENT -->
+<div class="modal-overlay" id="modal-apply">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">ПОДАТЬ ЗАЯВКУ</span>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Турнир: <strong id="apply-tournament-name" style="color:var(--text-primary);"></strong></p>
+      <input type="hidden" id="apply-tournament-id">
+      <form id="apply-form">
+        <div class="form-group">
+          <label class="form-label">Ваша команда</label>
+          <select class="form-select" id="apply-team-select" required></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Сообщение (необязательно)</label>
+          <textarea class="form-textarea" id="apply-message" placeholder="Краткая информация о команде..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary-action btn-full">Отправить заявку</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE TEAM -->
+<div class="modal-overlay" id="modal-create-team">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">СОЗДАТЬ КОМАНДУ</span>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="create-team-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Название команды</label>
+            <input type="text" id="team-name" class="form-input" placeholder="Team Name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Тег (3-5 букв)</label>
+            <input type="text" id="team-tag" class="form-input" placeholder="TAG" required maxlength="5">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Страна</label>
+          <input type="text" id="team-country" class="form-input" placeholder="Россия">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Описание</label>
+          <textarea id="team-desc" class="form-textarea" placeholder="Расскажите о команде..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Логотип команды</label>
+          <input type="file" id="team-logo-input" class="form-input" accept="image/*">
+          <img id="team-logo-preview" src="" style="display:none;width:80px;height:80px;object-fit:contain;margin-top:8px;border:1px solid var(--border-primary);" alt="">
+        </div>
+        <button type="submit" class="btn btn-primary-action btn-full">Создать команду</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- TEAM DETAIL -->
+<div class="modal-overlay" id="modal-team-detail">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">КОМАНДА</span>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;gap:20px;margin-bottom:24px;">
+        <div class="team-logo" style="width:80px;height:80px;font-size:24px;" id="team-detail-logo"></div>
+        <div>
+          <div style="font-family:var(--font-display);font-size:24px;font-weight:700;text-transform:uppercase;" id="team-detail-name"></div>
+          <span class="team-tag" id="team-detail-tag"></span>
+        </div>
+      </div>
+      <div class="grid-2" style="gap:12px;margin-bottom:20px;">
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Страна</div>
+          <div id="team-detail-country" style="font-size:14px;color:var(--text-primary);"></div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Капитан</div>
+          <div id="team-detail-owner" style="font-size:14px;color:var(--text-primary);"></div>
+        </div>
+      </div>
+      <div style="margin-bottom:20px;">
+        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Описание</div>
+        <div id="team-detail-desc" style="font-size:13px;color:var(--text-secondary);line-height:1.7;"></div>
+      </div>
+      <hr class="divider">
+      <div>
+        <div style="font-family:var(--font-display);font-size:14px;font-weight:700;text-transform:uppercase;margin-bottom:12px;">Состав</div>
+        <div id="team-detail-members"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary-action" id="team-detail-chat-btn" style="display:none;"><i class="fas fa-comments"></i>&nbsp; Чат команды</button>
+      <button class="btn btn-primary-action" id="team-detail-edit-btn" style="display:none;"><i class="fas fa-edit"></i>&nbsp; Редактировать</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT TEAM -->
+<div class="modal-overlay" id="modal-edit-team">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">РЕДАКТИРОВАТЬ КОМАНДУ</span>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="edit-team-form">
+        <input type="hidden" id="edit-team-id">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Название</label>
+            <input type="text" id="edit-team-name" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Тег</label>
+            <input type="text" id="edit-team-tag" class="form-input" required maxlength="5">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Страна</label>
+          <input type="text" id="edit-team-country" class="form-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Описание</label>
+          <textarea id="edit-team-desc" class="form-textarea"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Логотип (замена)</label>
+          <input type="file" id="edit-team-logo-input" class="form-input" accept="image/*">
+          <img id="edit-team-logo-preview" src="" style="display:none;width:80px;height:80px;object-fit:contain;margin-top:8px;border:1px solid var(--border-primary);" alt="">
+        </div>
+        <button type="submit" class="btn btn-primary-action btn-full">Сохранить</button>
+      </form>
+      <hr class="divider">
+      <div>
+        <div style="font-family:var(--font-display);font-size:13px;font-weight:700;text-transform:uppercase;margin-bottom:12px;">Состав</div>
+        <div id="current-members-list"></div>
+      </div>
+      <hr class="divider">
+      <div>
+        <div style="font-family:var(--font-display);font-size:13px;font-weight:700;text-transform:uppercase;margin-bottom:12px;">Пригласить игрока</div>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="invite-username-input" class="form-input" placeholder="Имя пользователя...">
+          <button class="btn btn-primary-action" id="invite-player-btn" style="white-space:nowrap;"><i class="fas fa-user-plus"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TEAM CHAT -->
+<div class="modal-overlay" id="modal-team-chat">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="team-chat-name">Чат команды</span>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" style="padding:0;">
+      <div class="chat-container" style="height:500px;border:none;">
+        <div class="chat-messages" id="team-chat-messages"></div>
+        <div class="chat-input-area">
+          <input type="text" class="chat-input" id="team-chat-input" placeholder="Сообщение команде...">
+          <button class="chat-send-btn" id="team-chat-send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NEWS DETAIL -->
+<div class="modal-overlay" id="modal-news-detail">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title">НОВОСТЬ</span>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <img id="news-detail-img" src="" style="width:100%;height:240px;object-fit:cover;display:none;margin-bottom:20px;" alt="">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <div id="news-detail-category"></div>
+        <span style="font-size:12px;color:var(--text-muted);" id="news-detail-date"></span>
+        <span style="font-size:12px;color:var(--text-muted);">by <span id="news-detail-author"></span></span>
+      </div>
+      <h2 style="font-family:var(--font-display);font-size:24px;font-weight:700;margin-bottom:16px;text-transform:uppercase;line-height:1.2;" id="news-detail-title"></h2>
+      <div id="news-detail-content" style="font-size:14px;color:var(--text-secondary);line-height:1.8;white-space:pre-wrap;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PLAYER PROFILE MODAL -->
+<div class="modal-overlay" id="modal-player-profile">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">ПРОФИЛЬ ИГРОКА</span>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="profile-header" style="padding:20px;margin-bottom:20px;">
+        <div class="profile-avatar-large" id="player-profile-avatar" style="width:70px;height:70px;font-size:24px;"></div>
+        <div class="profile-info">
+          <div class="profile-username" style="font-size:22px;" id="player-profile-username"></div>
+          <div class="profile-display-name" id="player-profile-displayname"></div>
+          <div id="player-profile-role" style="margin-top:6px;"></div>
+        </div>
+      </div>
+      <div style="display:grid;gap:12px;">
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">О себе</div>
+          <div id="player-profile-bio" style="font-size:13px;color:var(--text-secondary);"></div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Страна</div>
+          <div id="player-profile-country" style="font-size:13px;color:var(--text-primary);"></div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Steam</div>
+          <div id="player-profile-steam" style="font-size:13px;color:var(--text-primary);font-family:var(--font-mono);"></div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Команды</div>
+          <div id="player-profile-teams"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN CREATE/EDIT TOURNAMENT -->
+<div class="modal-overlay" id="modal-admin-tournament">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title" id="admin-tournament-modal-title">СОЗДАТЬ ТУРНИР</span>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="admin-tournament-form">
+        <input type="hidden" id="admin-tournament-id">
+        <div class="form-group">
+          <label class="form-label">Название турнира *</label>
+          <input type="text" id="at-name" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Описание</label>
+          <textarea id="at-description" class="form-textarea"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">URL баннера</label>
+          <input type="url" id="at-banner" class="form-input" placeholder="https://...">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Формат</label>
+            <select id="at-format" class="form-select">
+              <option value="single_elimination">Single Elimination</option>
+              <option value="double_elimination">Double Elimination</option>
+              <option value="round_robin">Round Robin</option>
+              <option value="swiss">Swiss</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Макс. команд</label>
+            <input type="number" id="at-max-teams" class="form-input" value="16" min="2" max="256">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Призовой фонд</label>
+          <input type="text" id="at-prize" class="form-input" placeholder="₽100,000">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Начало регистрации</label>
+            <input type="datetime-local" id="at-reg-start" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Конец регистрации</label>
+            <input type="datetime-local" id="at-reg-end" class="form-input">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Начало турнира</label>
+            <input type="datetime-local" id="at-start" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Конец турнира</label>
+            <input type="datetime-local" id="at-end" class="form-input">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Статус</label>
+          <select id="at-status" class="form-select">
+            <option value="upcoming">Скоро</option>
+            <option value="registration">Регистрация</option>
+            <option value="ongoing">Идёт</option>
+            <option value="completed">Завершён</option>
+            <option value="cancelled">Отменён</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary-action btn-full">Сохранить</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN CREATE/EDIT NEWS -->
+<div class="modal-overlay" id="modal-admin-news">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title" id="admin-news-modal-title">СОЗДАТЬ НОВОСТЬ</span>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="admin-news-form">
+        <input type="hidden" id="admin-news-id">
+        <div class="form-group">
+          <label class="form-label">Заголовок *</label>
+          <input type="text" id="an-title" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Текст *</label>
+          <textarea id="an-content" class="form-textarea" style="min-height:200px;" required></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">URL баннера</label>
+          <input type="url" id="an-banner" class="form-input" placeholder="https://...">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Категория</label>
+            <select id="an-category" class="form-select">
+              <option value="news">Новость</option>
+              <option value="announcement">Анонс</option>
+              <option value="update">Обновление</option>
+              <option value="event">Ивент</option>
+            </select>
+          </div>
+          <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:8px;">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-secondary);">
+              <input type="checkbox" id="an-published" style="width:16px;height:16px;accent-color:var(--accent-gold);">
+              Опубликовать
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary-action btn-full">Сохранить</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+function showProfileTab(tabId, btn) {
+    document.querySelectorAll('#page-profile .tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const tabs = ['tab-about', 'tab-teams', 'tab-applications', 'tab-edit'];
+    tabs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = id === tabId ? 'block' : 'none';
+    });
+}
+</script>
+<script src="app.js"></script>
+</body>
+</html>
